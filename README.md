@@ -1,4 +1,5 @@
 # komari-backup
+## 当前镜像版本 v1.2.2
 
 ## GitHub 备份所需变量
 
