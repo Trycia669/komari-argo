@@ -1,4 +1,4 @@
-ARG KOMARI_VERSION=1.2.3
+ARG KOMARI_VERSION=latest
 FROM ghcr.io/komari-monitor/komari:${KOMARI_VERSION:-latest}
 
 ARG CADDY_VERSION="2.9.1"
