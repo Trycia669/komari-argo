@@ -281,7 +281,7 @@ docker run -d \
 | 环境变量 | 说明 | 默认值 | 示例值 |
 |---|---|---|---|
 | `UUID` | 订阅 UUID（为空则不启用订阅） | - | `550e8400-e29b-41d4-a716-446655440000` |
-| `CF_IP` | CDN 优选 IP 或域名 | `ip.sb` | `1.1.1.1` 或 `saas.sin.fan` |
+| `CF_IP` | CDN 优选 IP 或域名 | `ip.sb` |  `saas.sin.fan` |
 | `SUB_NAME` | 订阅名称 | `komari` | `MyProxy` |
 
 ##### 查看日志
@@ -678,11 +678,7 @@ docker rm komari
 #### 一键安装
 
 ```bash
-# 克隆项目
-git clone https://github.com/jyucoeng/komari.git && cd komari
-
-# 运行安装脚本
-sudo bash install.sh
+git clone https://github.com/jyucoeng/komari.git && cd komari && sudo bash install.sh
 ```
 
 按照菜单选择 **普通 Linux/VPS 安装**，输入配置信息。
@@ -694,7 +690,7 @@ sudo bash install.sh
 - 日志目录：`/opt/komari/logs`
 - 数据目录：`/opt/komari/data`
 
-#### 手动配置（安装后）
+#### 配置修改（安装后）
 
 如需修改配置，编辑：
 
@@ -998,5 +994,4 @@ ps aux | grep xray
 - https://github.com/komari-monitor/komari
 - https://github.com/yutian81/komari-backup
 
----
 
