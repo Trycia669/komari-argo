@@ -508,5 +508,6 @@ fi
 fi
 
 # 启动 supervisor 进程守护
-info "正在启动 Supervisor 进程管理器..."
+info "正在启动 Supervisor 进程管理器...."
 exec supervisord -c "$SUPERVISOR_CONF"
+
