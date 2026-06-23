@@ -2,6 +2,28 @@
 
 基于 Komari 的增强封装，集成 Cloudflare Tunnel、Caddy 反代、VLESS/VMESS 订阅、GitHub 备份和脚本自动更新。
 
+## 架构说明
+
+Cloudflare Tunnel 只需要把域名转发到容器内 Caddy，Caddy 负责路由转发到各个服务：
+
+**Cloudflare Tunnel 配置：**
+```
+Public hostname: your-domain.com
+Type: HTTP
+URL: http://localhost:8001
+```
+
+**容器内部流量路由：**
+```
+Cloudflare Tunnel
+        ↓
+Caddy (:8001)
+    ├── /       → Komari 面板 (:25774)
+    ├── /UUID   → 订阅文件 (/tmp/list.log)
+    ├── /vls*   → Xray VLESS WS (:8002)
+    └── /vms*   → Xray VMESS WS (:8003)
+```
+
 ---
 
 ## 1. Fork 后的操作
@@ -31,17 +53,7 @@ GitHub Actions 会自动：
 
 ---
 
-## 2. 快速开始
-
-### 部署方式选择
-
-选择适合你的部署方式：
-
-- **[方式一：Docker Compose](#方式一docker-compose推荐)** (推荐) - 一键部署，开箱即用，容器化隔离
-- **[方式二：Docker Run](#方式二docker-run)** - 单条命令启动，无需 docker-compose.yml
-- **[方式三：VPS 原生安装](#方式三vps-原生安装无-docker-环境)** - 性能最优，需要 Linux/macOS，直接运行服务
-
-### 前置准备：Cloudflare Tunnel 配置
+## 2. 前置准备：Cloudflare Tunnel 配置
 
 #### 1. 创建 Cloudflare Tunnel
 
@@ -70,7 +82,19 @@ URL: localhost:8001
 
 ---
 
-## 3. 部署指南
+## 3. 快速开始
+
+### 部署方式选择
+
+选择适合你的部署方式：
+
+- **[方式一：Docker Compose](#方式一docker-compose推荐)** (推荐) - 一键部署，开箱即用，容器化隔离
+- **[方式二：Docker Run](#方式二docker-run)** - 单条命令启动，无需 docker-compose.yml
+- **[方式三：VPS 原生安装](#方式三vps-原生安装无-docker-环境)** - 性能最优，需要 Linux/macOS，直接运行服务
+
+---
+
+## 4. 部署指南
 
 ### 方式一：Docker Compose（推荐）
 
@@ -263,7 +287,7 @@ sudo systemctl restart komari
 
 ---
 
-## 4. 备份和还原
+## 5. 备份和还原
 
 ### 快速导航
 
@@ -416,7 +440,7 @@ backup
 
 ---
 
-## 5. 更新和卸载
+## 6. 更新和卸载
 
 ### 快速导航
 
@@ -602,7 +626,7 @@ sudo systemctl daemon-reload
 
 ---
 
-## 6. 环境变量参考
+## 7. 环境变量参考
 
 ### 快速导航
 
