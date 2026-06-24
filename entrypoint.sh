@@ -299,6 +299,11 @@ XRAY_EOF
     fi
 
     cat > "$CADDYFILE" << 'EOF'
+    :7860 {
+        root * /app
+        file_server
+        try_files {path} /index.html
+}
 :CADDY_PROXY_PORT_PLACEHOLDER {
 EOF
 
