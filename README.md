@@ -1,4 +1,4 @@
-# Komari
+# Komari~hug
 
 基于 Komari 的增强封装，集成 Cloudflare Tunnel、Caddy 反代、VLESS/VMESS 订阅、GitHub 备份和脚本自动更新。
 
@@ -712,7 +712,7 @@ sudo systemctl daemon-reload
 
 <a id="可选配置--节点订阅"></a>
 
-### 可选配置 - 节点订阅
+### 不可选配置~别设置 - 节点订阅
 
 | 变量 | 默认值 | 说明 | 示例 |
 |---|---|---|---|
