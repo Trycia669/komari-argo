@@ -1,37 +1,50 @@
-ARG KOMARI_VERSION=latest
-FROM ghcr.io/komari-monitor/komari:${KOMARI_VERSION:-latest}
+FROM debian:bookworm-slim
 
-ARG CADDY_VERSION="2.9.1"
-ARG TARGETARCH
-ARG TARGETVARIANT
+# 安装依赖
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        wget \
+        curl \
+        bash \
+        git \
+        tar \
+        jq \
+        unzip \
+        sqlite3 \
+        ca-certificates \
+        python3 \
+        supervisor \
+        procps \
+        tzdata && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apk add --no-cache \
-    bash \
-    curl \
-    wget \
-    git \
-    sqlite \
-    jq \
-    tar \
-    supervisor \
-    coreutils \
-    unzip \
-    python3
+# 环境变量
+ENV TZ=UTC
 
-RUN set -eux; \
-    case "${TARGETARCH:-$(apk --print-arch)}${TARGETVARIANT:-}" in \
-        amd64|x86_64) arch="amd64" ;; \
-        arm64|aarch64) arch="arm64" ;; \
-        armv7|arm/v7|armhf|armv7l) arch="arm" ;; \
-        *) echo "Unsupported architecture: ${TARGETARCH:-$(apk --print-arch)}${TARGETVARIANT:-}" >&2; exit 1 ;; \
-    esac; \
-    mkdir -p /usr/local/bin /app/bin; \
-    wget -q "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_${arch}.tar.gz" -O /tmp/caddy.tar.gz; \
-    tar xzf /tmp/caddy.tar.gz -C /usr/local/bin caddy; \
-    chmod +x /usr/local/bin/caddy; \
-    rm -f /tmp/caddy.tar.gz; \
-    rm -f /usr/local/bin/cloudflared /usr/bin/cloudflared /app/bin/cloudflared
+WORKDIR /app
 
+# 安装 Komari
+RUN wget -q https://github.com/komari-monitor/komari/releases/latest/download/komari-linux-amd64 \
+    -O /app/komari && \
+    chmod +x /app/komari
+
+# 安装 Caddy
+ARG CADDY_VERSION=2.9.1
+RUN ARCH=$(dpkg --print-architecture) && \
+    case "$ARCH" in \
+        amd64) arch="amd64" ;; \
+        arm64) arch="arm64" ;; \
+        *) echo "Unsupported arch: $ARCH"; exit 1 ;; \
+    esac && \
+    wget -q "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_${arch}.tar.gz" -O /tmp/caddy.tar.gz && \
+    tar xzf /tmp/caddy.tar.gz -C /usr/local/bin caddy && \
+    chmod +x /usr/local/bin/caddy && \
+    rm -f /tmp/caddy.tar.gz
+
+# 删除可能存在的 cloudflared
+RUN rm -f /usr/local/bin/cloudflared /usr/bin/cloudflared
+
+# 复制脚本
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
@@ -52,4 +65,11 @@ RUN chmod +x /app/renew.sh
 COPY sub_link.sh /app/sub_link.sh
 RUN chmod +x /app/sub_link.sh
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# 创建目录
+RUN mkdir -p /app/data /tmp
+
+# HuggingFace 必须端口
+EXPOSE 7860
+
+# 启动
+CMD ["/usr/local/bin/entrypoint.sh"]
