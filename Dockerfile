@@ -66,6 +66,8 @@ RUN chmod +x /app/renew.sh
 COPY sub_link.sh /app/sub_link.sh
 RUN chmod +x /app/sub_link.sh
 
+COPY index.html /app/index.html
+
 # 创建目录
 RUN mkdir -p /app/data /tmp
 
